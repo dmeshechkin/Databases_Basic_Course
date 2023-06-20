@@ -1,0 +1,68 @@
+Задание 1:
+sqlite> CREATE VIEW courses_info AS
+   ...> 	SELECT
+   ...> 		courses.name,
+   ...> 		MAX(streams.stream),
+   ...> 		streams.started_at,
+   ...> 		AVG(grades.grade)
+   ...> FROM courses
+   ...> 	LEFT JOIN streams
+   ...> 		ON courses.id = streams.course_id
+   ...> 	LEFT JOIN grades
+   ...> 		ON streams.id = grades.stream_id
+   ...> GROUP BY name;
+   
+   
+sqlite> SELECT * FROM courses_info;
+name                    MAX(streams.stream)  started_at  AVG(grades.grade)
+----------------------  -------------------  ----------  -----------------
+Linux. Рабочая станция  165                  2020-08-18  4.7
+Базы Данных             210                  2020-12-03  4.85
+Основы Python           178                  2020-10-02  4.9
+
+Задание 2:
+
+sqlite> BEGIN TRANSACTION;
+sqlite> 	DELETE FROM grades WHERE teacher_id = 3;
+sqlite> 	DELETE FROM teachers WHERE id = 3;
+sqlite> 	DELETE FROM streams WHERE teacher_id = 3;  #данные по преподавателю с ID=3 были и в этой таблице.
+sqlite> COMMIT;
+
+sqlite> SELECT * FROM teachers;
+id  name     second_name  email
+--  -------  -----------  -------------------
+1   Николай  Савельев     saveliev.n@mai.ru
+2   Наталья  Петрова      petrova.n@yandex.ru
+
+sqlite> SELECT * FROM grades;
+teacher_id  stream_id  grade
+----------  ---------  -----
+2           2          4.9
+1           3          4.8
+1           4          4.9
+
+sqlite> SELECT * FROM streams;
+id  course_id  teacher_id  stream  started_at  students  finished_at
+--  ---------  ----------  ------  ----------  --------  -----------
+2   2          2           178     2020-10-02  37        2020-11-02
+3   1          1           203     2020-11-12  35        2020-12-12
+4   1          1           210     2020-12-03  41        2021-01-03
+
+
+Задание 3:
+
+sqlite> CREATE TRIGGER check_grade_format BEFORE INSERT
+   ...> ON grades
+   ...> BEGIN
+   ...> 	SELECT CASE
+   ...> 	WHEN
+   ...> 		(NEW.grade NOT BETWEEN 0 AND 5)
+   ...> 	THEN
+   ...> 		RAISE(ABORT, 'GRADE SHOUD BE BETWEEN 0 AND 5')
+   ...> 	END;
+   ...> END;
+   
+  
+sqlite> INSERT INTO grades (teacher_id, stream_id, grade) VALUES (1, 4, 7);
+Runtime error: GRADE SHOUD BE BETWEEN 0 AND 5 (19)
+

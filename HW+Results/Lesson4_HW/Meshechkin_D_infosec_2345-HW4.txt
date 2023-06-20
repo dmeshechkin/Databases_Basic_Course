@@ -1,0 +1,60 @@
+Задание 1:
+# В таблице потоки имеются два столбца с датами, для обоих изменю вид отображения в таблице:
+ UPDATE streams SET started_at = SUBSTR(started_at, 7, 4) || '-' || SUBSTR(started_at, 4, 2) || '-' || SUBSTR(started_at, 1, 2);
+ UPDATE streams SET finished_at = SUBSTR(finished_at, 7, 4) || '-' || SUBSTR(finished_at, 4, 2) || '-' || SUBSTR(finished_at, 1, 2);
+ 
+ select * from streams; # проверю таблицу. 
+
+id  course_id  teacher_id  stream  started_at  students  finished_at
+--  ---------  ----------  ------  ----------  --------  -----------
+1   3          3           165     2020-08-18  34        2020-09-18
+2   2          2           178     2020-10-02  37        2020-11-02
+3   1          1           203     2020-11-12  35        2020-12-12
+4   1          1           210     2020-12-03  41        2021-01-03
+
+
+Задание 2: 
+
+sqlite> SELECT id, stream, started_at FROM streams ORDER BY started_at DESC LIMIT 1;
+# Данная команда выведет таблицу с столбцами ключа потока, номера потока, датой начала потока, которая будет отсортирована по дате
+# начала потока в убывающем порядке и выведет только первую строку в данной сортировке.
+id  stream  started_at
+--  ------  ----------
+4   210     2020-12-03
+
+
+Задание 3:
+
+sqlite> SELECT DISTINCT(SUBSTR(started_at, 1, 4)) FROM streams;
+(SUBSTR(started_at, 1, 4))
+--------------------------
+2020
+
+Задание 4:
+
+sqlite> SELECT id, MAX(id) AS 'total_teachers' FROM teachers ORDER by id DESC;
+id  total_teachers
+--  --------------
+3   3
+
+Задание 5:
+
+sqlite> SELECT id, stream, started_at FROM streams ORDER BY started_at DESC LIMIT 2;
+id  stream  started_at
+--  ------  ----------
+4   210     2020-12-03
+3   203     2020-11-12
+
+Задание 6:
+
+sqlite> SELECT AVG(grade) FROM grades WHERE teacher_id = 1;
+AVG(grade)
+----------
+4.85
+
+Задание 7:
+sqlite> SELECT * FROM grades WHERE grade <= 4.8;
+teacher_id  stream_id  grade
+----------  ---------  -----
+3           1          4.7
+1           3          4.8

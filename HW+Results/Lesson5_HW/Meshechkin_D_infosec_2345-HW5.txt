@@ -1,0 +1,59 @@
+Задание 1:
+
+sqlite> select
+   ...> stream,
+   ...> (select name from courses where id = course_id) as course_name,
+   ...> students from streams where students >= 40;
+
+#выбран вариант отображения .header on / .mode column для удобного чтения.
+stream  course_name  students
+------  -----------  --------
+210     Базы Данных  41
+
+
+Задание 2:
+
+select
+   ...> (select stream from streams where course_id = stream_id) as stream,
+   ...> (select name from courses where id = stream_id) as course,
+   ...> (select name || ' ' || second_name from teachers where id = teacher_id) as teacher,
+   ...> grade from grades order by grade asc limit 2;
+   
+   
+stream  course                  teacher           grade
+------  ----------------------  ----------------  -----
+203     Базы Данных             Елена Малышева    4.7
+165     Linux. Рабочая станция  Николай Савельев  4.8
+
+
+Задание 3:
+
+select
+   ...> (select id from teachers where second_name = 'Савельев' and name = 'Николай') AS teacher_id,
+   ...> AVG(grade) from grades where grades.teacher_id = (select id from teachers where second_name = 'Савельев' and name = 'Николай');
+   
+   
+teacher_id  AVG(grade)
+----------  ----------
+1           4.85
+
+
+Задание 4:
+
+sqlite> select
+   ...> stream_id,
+   ...> (select name from teachers where id = teacher_id) as teacher_name,
+   ...> (select second_name from teachers where id = teacher_id) as teacher_second_name 
+   ...> from grades where teacher_id = (select id from teachers where name = 'Наталья' and second_name = 'Петрова')
+   ...> union all
+   ...> select
+   ...> stream_id,
+   ...> (select name from teachers where id = teacher_id) as teacher_name,
+   ...> (select second_name from teachers where id = teacher_id) as teacher_second_name
+   ...> from grades where grade < 4.8;
+   
+   
+stream_id  teacher_name  teacher_second_name
+---------  ------------  -------------------
+2          Наталья       Петрова
+1          Елена         Малышева

@@ -1,0 +1,138 @@
+Задание 1:
+
+sqlite> .schema streams # вызов схемы таблицы "потоки".
+
+CREATE TABLE streams (
+id INTEGER NOT NULL,
+course_id INTEGER NOT NULL,
+teacher_id INTEGER NOT NULL,
+stream INTEGER NOT NULL,
+start_date TEXT NOT NULL,
+students INTEGER NOT NULL,
+PRIMARY KEY(id, course_id, teacher_id),
+FOREIGN KEY (course_id) REFERENCES courses(id),
+FOREIGN KEY (teacher_id) REFERENCES teachers(id)
+);
+
+sqlite> ALTER TABLE streams RENAME COLUMN start_date TO started_at; # переименование столбца по заданию. 
+
+sqlite> .schema streams # проверка выполнения команды с переименованием столбца.
+CREATE TABLE streams (
+id INTEGER NOT NULL,
+course_id INTEGER NOT NULL,
+teacher_id INTEGER NOT NULL,
+stream INTEGER NOT NULL,
+started_at TEXT NOT NULL,
+students INTEGER NOT NULL,
+PRIMARY KEY(id, course_id, teacher_id),
+FOREIGN KEY (course_id) REFERENCES courses(id),
+FOREIGN KEY (teacher_id) REFERENCES teachers(id)
+);
+sqlite>
+
+
+Задание 2:
+sqlite> ALTER TABLE streams ADD COLUMN finished_at TEXT; # Добавление нового столбца таблицы с типом данных TEXT.
+
+sqlite> .schema streams # Проверка добавления столбца.
+CREATE TABLE streams (
+id INTEGER NOT NULL,
+course_id INTEGER NOT NULL,
+teacher_id INTEGER NOT NULL,
+stream INTEGER NOT NULL,
+started_at TEXT NOT NULL,
+students INTEGER NOT NULL, finished_at TEXT, # Столбец добавлен, но в выводе SQLite не захотел выделяться отдельной строкой. В следствии чего получилось познакомиться сразу и с удалением столбцов.
+PRIMARY KEY(id, course_id, teacher_id),
+FOREIGN KEY (course_id) REFERENCES courses(id),
+FOREIGN KEY (teacher_id) REFERENCES teachers(id)
+);
+sqlite>
+
+Задание 3: Наполнение таблиц согласно методичке:
+
+INSERT INTO teachers (id, name, second_name, email) VALUES (1, 'Николай', 'Савельев', 'saveliev.n@mai.ru'); # добавление строки в таблицу "Преподаватели".
+
+sqlite> INSERT INTO teachers (name, second_name, email) VALUES #добавление нескольких строк одной командой.
+   ...> ('Наталья', 'Петрова', 'petrova.n@yandex.ru'),
+   ...> ('Елена', 'Малышева', 'malisheva.e@google.com');
+sqlite> select * from teachers; #проверка наполненности таблицы.
+1|Николай|Савельев|saveliev.n@mai.ru
+2|Наталья|Петрова|petrova.n@yandex.ru
+3|Елена|Малышева|malisheva.e@google.com
+
+
+sqlite> INSERT INTO courses (id, name) VALUES (1, 'Базы Данных'); #добавление первой записи в таблицу курсы для задания начального ключа для дальнейшей инкриментации ключей.
+sqlite> .mode tabs # смена вывода отображения команды
+sqlite> INSERT INTO courses (name) VALUES #ввод последующих строк
+   ...> ('Основы Python'),
+   ...> ('Linux. Рабочая станция');
+sqlite> select * from courses
+   ...> ;
+1       Базы Данных
+2       Основы Python
+3       Linux. Рабочая станция
+
+sqlite> INSERT INTO streams (id, course_id, teacher_id, stream, started_at, students, finished_at) VALUES (1, 3, 3, 165, '18.08.2020', 34, '18.09.2020');
+# Ввод первой строки  таблицу "Потоки". В данной таблице можно было сразу вводить все строки для выполнения задания, так как
+# инкриментации по ключам не удалось поставить в прошлом ДЗ.
+sqlite> INSERT INTO streams (id, course_id, teacher_id, stream, started_at, students, finished_at) VALUES # Ввод последующих строк.
+   ...> (2, 2, 2, 178, '02.10.2020', 37, '02.11.2020'),
+   ...> (3, 1, 1, 203, '12.11.2020', 35, '12.12.2020'),
+   ...> (4, 1, 1, 210, '03.12.2020', 41, '03.01.2021');
+
+sqlite> .mode line # смена отображения вывода таблицы.
+sqlite> select * from streams; # вывод наполненности таблицы.
+         id = 1
+  course_id = 3
+ teacher_id = 3
+     stream = 165
+ started_at = 18.08.2020
+   students = 34
+finished_at = 18.09.2020
+
+         id = 2
+  course_id = 2
+ teacher_id = 2
+     stream = 178
+ started_at = 02.10.2020
+   students = 37
+finished_at = 02.11.2020
+
+         id = 3
+  course_id = 1
+ teacher_id = 1
+     stream = 203
+ started_at = 12.11.2020
+   students = 35
+finished_at = 12.12.2020
+
+         id = 4
+  course_id = 1
+ teacher_id = 1
+     stream = 210
+ started_at = 03.12.2020
+   students = 41
+finished_at = 03.01.2021
+
+
+sqlite> INSERT INTO grades (teacher_id, stream_id, grade) VALUES #Наполнение таблицы "Успеваемость" одной командой.
+   ...> (3, 1, 4.7),
+   ...> (2, 2, 4.9),
+   ...> (1, 3, 4.8),
+   ...> (1, 4, 4.9);
+sqlite> select * from grades; # вывод наполнения таблицы.
+teacher_id = 3
+ stream_id = 1
+     grade = 4.7
+
+teacher_id = 2
+ stream_id = 2
+     grade = 4.9
+
+teacher_id = 1
+ stream_id = 3
+     grade = 4.8
+
+teacher_id = 1
+ stream_id = 4
+     grade = 4.9

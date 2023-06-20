@@ -1,0 +1,50 @@
+Задание 1:
+
+sqlite> SELECT DISTINCT
+   ...> courses.name,
+   ...> SUM(streams.students) OVER(w_students) AS sum_students
+   ...> FROM streams
+   ...> 	LEFT JOIN courses
+   ...> 		ON streams.course_id = courses.id
+   ...> 	WINDOW w_students AS (PARTITION BY courses.name);
+   
+name           sum_students
+-------------  ------------
+Базы Данных    76
+Основы Python  37			#строка с Linux была удалена с прошлым дз, по хорошему и она должна была бы быть тут.
+
+Задание 2:
+sqlite> SELECT DISTINCT
+   ...> teachers.id,
+   ...> teachers.name,
+   ...> teachers.second_name,
+   ...> AVG(grades.grade) OVER(w_grades) AS AVG_grade
+   ...> FROM teachers
+   ...> LEFT JOIN grades
+   ...> ON teachers.id = grades.teacher_id
+   ...> WINDOW w_grades AS (PARTITION BY teacher_id);
+   
+id  name     second_name  AVG_grade
+--  -------  -----------  ---------
+1   Николай  Савельев     4.85
+2   Наталья  Петрова      4.9
+
+Задание 3:
+
+SELECT
+  surname,
+  name,
+  number,
+  performance
+FROM academic_performance
+  JOIN teachers 
+    ON academic_performance.teacher_id = teachers.id
+  JOIN streams
+    ON academic_performance.stream_id = streams.id
+WHERE number >= 200;  
+
+Для данного запроса запроса необходимо будет проиндексировать две таблицы.
+CREATE INDEX teachers_surname_name_idx ON teachers(surname, name);
+CREATE INDEX streams_number_idx ON streams(number);
+# задание выполнено сугубо на бумаге, работоспособно в SQLite не пробовал.
+
